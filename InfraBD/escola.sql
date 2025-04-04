@@ -1,25 +1,80 @@
-CREATE DATABASE escola;
+-- Criação do banco de dados
+CREATE DATABASE IF NOT EXISTS escola;
 USE escola;
-CREATE TABLE alunos (
-    aluno_id CHARACTER VARYING(5) NOT NULL,
-    nome CHARACTER VARYING(40) NOT NULL,
-    endereco CHARACTER VARYING(60),
-    cidade CHARACTER VARYING(15),
-    estado CHARACTER VARYING(15),
-    cep CHARACTER VARYING(10),
-    pais CHARACTER VARYING(15),
-    telefone CHARACTER VARYING(24),
-    PRIMARY KEY (aluno_id)
+
+-- Tabela Aluno
+CREATE TABLE Aluno (
+    id_aluno INT AUTO_INCREMENT PRIMARY KEY,
+    nome_completo VARCHAR(255) NOT NULL,
+    data_nascimento DATE NOT NULL,
+    id_turma INT,
+    nome_responsavel VARCHAR(255) NOT NULL,
+    telefone_responsavel VARCHAR(20) NOT NULL,
+    email_responsavel VARCHAR(100) NOT NULL,
+    informacoes_adicionais TEXT,
+    FOREIGN KEY (id_turma) REFERENCES Turma(id_turma)
 );
 
-INSERT INTO alunos (aluno_id, nome, endereco, cidade, estado, cep, pais, telefone) VALUES
-('A001', 'João Silva', 'Rua das Flores, 123', 'São Paulo', 'SP', '01001-000', 'Brasil', '11987654321'),
-('A002', 'Maria Oliveira', 'Av. Paulista, 456', 'São Paulo', 'SP', '01310-000', 'Brasil', '11976543210'),
-('A003', 'Carlos Souza', 'Rua das Palmeiras, 789', 'Rio de Janeiro', 'RJ', '20040-000', 'Brasil', '21987654321'),
-('A004', 'Ana Santos', 'Praça da Liberdade, 101', 'Belo Horizonte', 'MG', '30140-000', 'Brasil', '31987654321'),
-('A005', 'Pedro Lima', 'Rua XV de Novembro, 202', 'Curitiba', 'PR', '80020-310', 'Brasil', '41987654321'),
-('A006', 'Fernanda Costa', 'Av. Atlântica, 303', 'Florianópolis', 'SC', '88015-000', 'Brasil', '48987654321'),
-('A007', 'Lucas Almeida', 'Rua das Acácias, 404', 'Porto Alegre', 'RS', '90010-000', 'Brasil', '51987654321'),
-('A008', 'Juliana Pereira', 'Av. Brasil, 505', 'Recife', 'PE', '50010-000', 'Brasil', '81987654321'),
-('A009', 'Rafael Mendes', 'Rua do Comércio, 606', 'Salvador', 'BA', '40010-000', 'Brasil', '71987654321'),
-('A010', 'Camila Rocha', 'Av. das Nações, 707', 'Brasília', 'DF', '70040-000', 'Brasil', '61987654321');
+-- Tabela Turma
+CREATE TABLE Turma (
+    id_turma INT AUTO_INCREMENT PRIMARY KEY,
+    nome_turma VARCHAR(50) NOT NULL,
+    id_professor INT,
+    horario VARCHAR(100),
+    FOREIGN KEY (id_professor) REFERENCES Professor(id_professor)
+);
+
+-- Tabela Professor
+CREATE TABLE Professor (
+    id_professor INT AUTO_INCREMENT PRIMARY KEY,
+    nome_completo VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    telefone VARCHAR(20)
+);
+
+-- Tabela Pagamento
+CREATE TABLE Pagamento (
+    id_pagamento INT AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT NOT NULL,
+    data_pagamento DATE NOT NULL,
+    valor_pago DECIMAL(10, 2) NOT NULL,
+    forma_pagamento VARCHAR(50) NOT NULL,
+    referencia VARCHAR(100),
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno)
+);
+
+-- Tabela Presenca
+CREATE TABLE Presenca (
+    id_presenca INT AUTO_INCREMENT PRIMARY KEY,
+    id_aluno INT NOT NULL,
+    data_presenca DATE NOT NULL,
+    presente BOOLEAN NOT NULL,
+    FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno)
+);
+
+-- Tabela Atividade
+CREATE TABLE Atividade (
+    id_atividade INT AUTO_INCREMENT PRIMARY KEY,
+    descricao TEXT NOT NULL,
+    data_realizacao DATE NOT NULL
+);
+
+-- Tabela de Ligação Atividade_Aluno
+CREATE TABLE Atividade_Aluno (
+    id_atividade INT NOT NULL,
+    id_aluno INT NOT NULL,
+    PRIMARY KEY (id_atividade, id_aluno),
+    FOREIGN KEY (id_atividade) REFERENCES Atividade(id_atividade),
+    FOREIGN KEY (id_aluno) REFERENCES Aluno(id_aluno)
+);
+
+-- Tabela Usuario
+CREATE TABLE Usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    login VARCHAR(50) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    nivel_acesso VARCHAR(20) NOT NULL,
+    id_professor INT,
+    FOREIGN KEY (id_professor) REFERENCES Professor(id_professor)
+);
